@@ -1,0 +1,28 @@
+[project]
+name = "opengxp"
+version = "0.1.0"
+description = "Guideline-as-code MCP servers for regulated pharma work (ICH Q3A/Q3B/Q3C/Q3D and more)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=3",
+    "pydantic>=2.14.3",
+    "rapidfuzz>=3.14.6",
+]
+
+license = "Apache-2.0"
+keywords = ["mcp", "pharma", "ich", "cmc", "gxp", "fastmcp"]
+
+[project.scripts]
+opengxp = "opengxp.server:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "anyio>=4.16.0",
+    "hypothesis>=6.170.15",
+    "pytest>=9.2.0",
+]
