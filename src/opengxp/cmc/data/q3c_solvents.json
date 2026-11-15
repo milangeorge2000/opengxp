@@ -1,0 +1,794 @@
+{
+ "guideline": "ICH Q3C(R9)",
+ "source": "EMA/CHMP/ICH/82260/2006 Step 5, Tables 1-4",
+ "cas_note": "CAS numbers and synonyms are lookup aids added by OpenGxP; they are not part of the guideline tables.",
+ "solvents": [
+  {
+   "name": "Benzene",
+   "cas": "71-43-2",
+   "solvent_class": "1",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": 2.0,
+   "synonyms": [
+    "benzol"
+   ],
+   "note": "Class 1: avoid; fixed concentration limit."
+  },
+  {
+   "name": "Carbon tetrachloride",
+   "cas": "56-23-5",
+   "solvent_class": "1",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": 4.0,
+   "synonyms": [
+    "tetrachloromethane"
+   ],
+   "note": "Class 1: avoid; fixed concentration limit."
+  },
+  {
+   "name": "1,2-Dichloroethane",
+   "cas": "107-06-2",
+   "solvent_class": "1",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": 5.0,
+   "synonyms": [
+    "ethylene dichloride"
+   ],
+   "note": "Class 1: avoid; fixed concentration limit."
+  },
+  {
+   "name": "1,1-Dichloroethene",
+   "cas": "75-35-4",
+   "solvent_class": "1",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": 8.0,
+   "synonyms": [
+    "vinylidene chloride",
+    "1,1-dichloroethylene"
+   ],
+   "note": "Class 1: avoid; fixed concentration limit."
+  },
+  {
+   "name": "1,1,1-Trichloroethane",
+   "cas": "71-55-6",
+   "solvent_class": "1",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": 1500.0,
+   "synonyms": [
+    "methyl chloroform"
+   ],
+   "note": "Class 1: avoid; fixed concentration limit."
+  },
+  {
+   "name": "Acetonitrile",
+   "cas": "75-05-8",
+   "solvent_class": "2",
+   "pde_mg_per_day": 4.1,
+   "option1_limit_ppm": 410.0,
+   "synonyms": [
+    "MeCN",
+    "ACN",
+    "methyl cyanide"
+   ]
+  },
+  {
+   "name": "Chlorobenzene",
+   "cas": "108-90-7",
+   "solvent_class": "2",
+   "pde_mg_per_day": 3.6,
+   "option1_limit_ppm": 360.0,
+   "synonyms": []
+  },
+  {
+   "name": "Chloroform",
+   "cas": "67-66-3",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.6,
+   "option1_limit_ppm": 60.0,
+   "synonyms": [
+    "trichloromethane"
+   ]
+  },
+  {
+   "name": "Cumene",
+   "cas": "98-82-8",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.7,
+   "option1_limit_ppm": 70.0,
+   "synonyms": [
+    "isopropylbenzene"
+   ]
+  },
+  {
+   "name": "Cyclohexane",
+   "cas": "110-82-7",
+   "solvent_class": "2",
+   "pde_mg_per_day": 38.8,
+   "option1_limit_ppm": 3880.0,
+   "synonyms": []
+  },
+  {
+   "name": "Cyclopentyl methyl ether",
+   "cas": "5614-37-9",
+   "solvent_class": "2",
+   "pde_mg_per_day": 15.0,
+   "option1_limit_ppm": 1500.0,
+   "synonyms": [
+    "CPME"
+   ]
+  },
+  {
+   "name": "1,2-Dichloroethene",
+   "cas": "540-59-0",
+   "solvent_class": "2",
+   "pde_mg_per_day": 18.7,
+   "option1_limit_ppm": 1870.0,
+   "synonyms": [
+    "1,2-dichloroethylene"
+   ]
+  },
+  {
+   "name": "Dichloromethane",
+   "cas": "75-09-2",
+   "solvent_class": "2",
+   "pde_mg_per_day": 6.0,
+   "option1_limit_ppm": 600.0,
+   "synonyms": [
+    "DCM",
+    "methylene chloride"
+   ]
+  },
+  {
+   "name": "1,2-Dimethoxyethane",
+   "cas": "110-71-4",
+   "solvent_class": "2",
+   "pde_mg_per_day": 1.0,
+   "option1_limit_ppm": 100.0,
+   "synonyms": [
+    "glyme",
+    "ethylene glycol dimethyl ether",
+    "monoglyme"
+   ]
+  },
+  {
+   "name": "N,N-Dimethylacetamide",
+   "cas": "127-19-5",
+   "solvent_class": "2",
+   "pde_mg_per_day": 10.9,
+   "option1_limit_ppm": 1090.0,
+   "synonyms": [
+    "DMAc",
+    "dimethylacetamide"
+   ]
+  },
+  {
+   "name": "N,N-Dimethylformamide",
+   "cas": "68-12-2",
+   "solvent_class": "2",
+   "pde_mg_per_day": 8.8,
+   "option1_limit_ppm": 880.0,
+   "synonyms": [
+    "DMF",
+    "dimethylformamide"
+   ]
+  },
+  {
+   "name": "1,4-Dioxane",
+   "cas": "123-91-1",
+   "solvent_class": "2",
+   "pde_mg_per_day": 3.8,
+   "option1_limit_ppm": 380.0,
+   "synonyms": [
+    "dioxane"
+   ]
+  },
+  {
+   "name": "2-Ethoxyethanol",
+   "cas": "110-80-5",
+   "solvent_class": "2",
+   "pde_mg_per_day": 1.6,
+   "option1_limit_ppm": 160.0,
+   "synonyms": [
+    "cellosolve",
+    "ethylene glycol monoethyl ether"
+   ]
+  },
+  {
+   "name": "Ethyleneglycol",
+   "cas": "107-21-1",
+   "solvent_class": "2",
+   "pde_mg_per_day": 6.2,
+   "option1_limit_ppm": 620.0,
+   "synonyms": [
+    "ethylene glycol",
+    "ethane-1,2-diol"
+   ]
+  },
+  {
+   "name": "Formamide",
+   "cas": "75-12-7",
+   "solvent_class": "2",
+   "pde_mg_per_day": 2.2,
+   "option1_limit_ppm": 220.0,
+   "synonyms": []
+  },
+  {
+   "name": "Hexane",
+   "cas": "110-54-3",
+   "solvent_class": "2",
+   "pde_mg_per_day": 2.9,
+   "option1_limit_ppm": 290.0,
+   "synonyms": [
+    "n-hexane"
+   ]
+  },
+  {
+   "name": "Methanol",
+   "cas": "67-56-1",
+   "solvent_class": "2",
+   "pde_mg_per_day": 30.0,
+   "option1_limit_ppm": 3000.0,
+   "synonyms": [
+    "MeOH",
+    "methyl alcohol"
+   ]
+  },
+  {
+   "name": "2-Methoxyethanol",
+   "cas": "109-86-4",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.5,
+   "option1_limit_ppm": 50.0,
+   "synonyms": [
+    "methyl cellosolve",
+    "ethylene glycol monomethyl ether"
+   ]
+  },
+  {
+   "name": "Methylbutyl ketone",
+   "cas": "591-78-6",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.5,
+   "option1_limit_ppm": 50.0,
+   "synonyms": [
+    "MBK",
+    "2-hexanone",
+    "methyl butyl ketone"
+   ]
+  },
+  {
+   "name": "Methylcyclohexane",
+   "cas": "108-87-2",
+   "solvent_class": "2",
+   "pde_mg_per_day": 11.8,
+   "option1_limit_ppm": 1180.0,
+   "synonyms": []
+  },
+  {
+   "name": "Methylisobutylketone",
+   "cas": "108-10-1",
+   "solvent_class": "2",
+   "pde_mg_per_day": 45.0,
+   "option1_limit_ppm": 4500.0,
+   "synonyms": [
+    "MIBK",
+    "methyl isobutyl ketone",
+    "4-methyl-2-pentanone"
+   ]
+  },
+  {
+   "name": "N-Methylpyrrolidone",
+   "cas": "872-50-4",
+   "solvent_class": "2",
+   "pde_mg_per_day": 5.3,
+   "option1_limit_ppm": 530.0,
+   "synonyms": [
+    "NMP",
+    "N-methyl-2-pyrrolidone",
+    "1-methyl-2-pyrrolidinone"
+   ]
+  },
+  {
+   "name": "Nitromethane",
+   "cas": "75-52-5",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.5,
+   "option1_limit_ppm": 50.0,
+   "synonyms": []
+  },
+  {
+   "name": "Pyridine",
+   "cas": "110-86-1",
+   "solvent_class": "2",
+   "pde_mg_per_day": 2.0,
+   "option1_limit_ppm": 200.0,
+   "synonyms": []
+  },
+  {
+   "name": "Sulfolane",
+   "cas": "126-33-0",
+   "solvent_class": "2",
+   "pde_mg_per_day": 1.6,
+   "option1_limit_ppm": 160.0,
+   "synonyms": [
+    "tetramethylene sulfone"
+   ]
+  },
+  {
+   "name": "Tertiary-butyl alcohol",
+   "cas": "75-65-0",
+   "solvent_class": "2",
+   "pde_mg_per_day": 35.0,
+   "option1_limit_ppm": 3500.0,
+   "synonyms": [
+    "TBA",
+    "tert-butanol",
+    "t-butanol",
+    "tert-butyl alcohol",
+    "2-methyl-2-propanol"
+   ]
+  },
+  {
+   "name": "Tetrahydrofuran",
+   "cas": "109-99-9",
+   "solvent_class": "2",
+   "pde_mg_per_day": 7.2,
+   "option1_limit_ppm": 720.0,
+   "synonyms": [
+    "THF"
+   ]
+  },
+  {
+   "name": "Tetralin",
+   "cas": "119-64-2",
+   "solvent_class": "2",
+   "pde_mg_per_day": 1.0,
+   "option1_limit_ppm": 100.0,
+   "synonyms": [
+    "1,2,3,4-tetrahydronaphthalene"
+   ]
+  },
+  {
+   "name": "Toluene",
+   "cas": "108-88-3",
+   "solvent_class": "2",
+   "pde_mg_per_day": 8.9,
+   "option1_limit_ppm": 890.0,
+   "synonyms": [
+    "methylbenzene"
+   ]
+  },
+  {
+   "name": "1,1,2-Trichloroethene",
+   "cas": "79-01-6",
+   "solvent_class": "2",
+   "pde_mg_per_day": 0.8,
+   "option1_limit_ppm": 80.0,
+   "synonyms": [
+    "trichloroethylene",
+    "trichloroethene"
+   ]
+  },
+  {
+   "name": "Xylene",
+   "cas": "1330-20-7",
+   "solvent_class": "2",
+   "pde_mg_per_day": 21.7,
+   "option1_limit_ppm": 2170.0,
+   "synonyms": [
+    "xylenes",
+    "dimethylbenzene"
+   ]
+  },
+  {
+   "name": "Acetic acid",
+   "cas": "64-19-7",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "ethanoic acid",
+    "AcOH"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Acetone",
+   "cas": "67-64-1",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "propanone",
+    "2-propanone"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Anisole",
+   "cas": "100-66-3",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "methoxybenzene"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "1-Butanol",
+   "cas": "71-36-3",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-butanol",
+    "butan-1-ol",
+    "n-butyl alcohol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "2-Butanol",
+   "cas": "78-92-2",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "sec-butanol",
+    "butan-2-ol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Butyl acetate",
+   "cas": "123-86-4",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-butyl acetate"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "tert-Butylmethyl ether",
+   "cas": "1634-04-4",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "MTBE",
+    "methyl tert-butyl ether"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Dimethyl sulfoxide",
+   "cas": "67-68-5",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "DMSO"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Ethanol",
+   "cas": "64-17-5",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "EtOH",
+    "ethyl alcohol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Ethyl acetate",
+   "cas": "141-78-6",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "EtOAc"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Ethyl ether",
+   "cas": "60-29-7",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "diethyl ether",
+    "ether",
+    "Et2O"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Ethyl formate",
+   "cas": "109-94-4",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Formic acid",
+   "cas": "64-18-6",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Heptane",
+   "cas": "142-82-5",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-heptane"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Isobutyl acetate",
+   "cas": "110-19-0",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Isopropyl acetate",
+   "cas": "108-21-4",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "IPAc"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Methyl acetate",
+   "cas": "79-20-9",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "3-Methyl-1-butanol",
+   "cas": "123-51-3",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "isoamyl alcohol",
+    "isopentyl alcohol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Methylethyl ketone",
+   "cas": "78-93-3",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "MEK",
+    "2-butanone",
+    "methyl ethyl ketone"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "2-Methyl-1-propanol",
+   "cas": "78-83-1",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "isobutanol",
+    "isobutyl alcohol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "2-Methyltetrahydrofuran",
+   "cas": "96-47-9",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "2-MeTHF",
+    "MeTHF"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Pentane",
+   "cas": "109-66-0",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-pentane"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "1-Pentanol",
+   "cas": "71-41-0",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-pentanol",
+    "amyl alcohol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "1-Propanol",
+   "cas": "71-23-8",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-propanol",
+    "propan-1-ol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "2-Propanol",
+   "cas": "67-63-0",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "IPA",
+    "isopropanol",
+    "isopropyl alcohol",
+    "propan-2-ol"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Propyl acetate",
+   "cas": "109-60-4",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "n-propyl acetate"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "Triethylamine",
+   "cas": "121-44-8",
+   "solvent_class": "3",
+   "pde_mg_per_day": 50.0,
+   "option1_limit_ppm": 5000.0,
+   "synonyms": [
+    "TEA",
+    "Et3N"
+   ],
+   "note": "Class 3: 50 mg/day (5000 ppm under Option 1) acceptable without justification; higher amounts may be justified."
+  },
+  {
+   "name": "1,1-Diethoxypropane",
+   "cas": "4744-08-5",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "1,1-Dimethoxymethane",
+   "cas": "109-87-5",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "methylal",
+    "dimethoxymethane"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "2,2-Dimethoxypropane",
+   "cas": "77-76-9",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "acetone dimethyl acetal"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Isooctane",
+   "cas": "540-84-1",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "2,2,4-trimethylpentane"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Isopropyl ether",
+   "cas": "108-20-3",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "diisopropyl ether",
+    "DIPE"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Methylisopropyl ketone",
+   "cas": "563-80-4",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "MIPK",
+    "3-methyl-2-butanone"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Petroleum ether",
+   "cas": "8032-32-4",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "petroleum spirit",
+    "ligroin"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Trichloroacetic acid",
+   "cas": "76-03-9",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "TCA"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  },
+  {
+   "name": "Trifluoroacetic acid",
+   "cas": "76-05-1",
+   "solvent_class": "no_pde",
+   "pde_mg_per_day": null,
+   "option1_limit_ppm": null,
+   "synonyms": [
+    "TFA"
+   ],
+   "note": "No adequate toxicological data; manufacturer must justify residual levels."
+  }
+ ]
+}
