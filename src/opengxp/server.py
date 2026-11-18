@@ -1,5 +1,5 @@
 """OpenGxP gateway: one MCP server that mounts every OpenGxP sub-server.
-Tool names already carry their server prefix (cmc_, stab_, sdtm_, label_)."""
+Tool names already carry their server prefix (cmc_, stab_, sdtm_, ind_)."""
 
 from fastmcp import FastMCP
 
@@ -7,6 +7,7 @@ from opengxp import __version__
 from opengxp.cmc.server import cmc
 from opengxp.stability.server import stab
 from opengxp.cdisc.server import sdtm
+from opengxp.ind.server import ind
 
 mcp = FastMCP(
     "opengxp",
@@ -17,6 +18,7 @@ mcp = FastMCP(
 mcp.mount(cmc)
 mcp.mount(stab)
 mcp.mount(sdtm)
+mcp.mount(ind)
 
 
 def main() -> None:
