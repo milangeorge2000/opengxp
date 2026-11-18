@@ -5,6 +5,7 @@ from fastmcp import FastMCP
 
 from opengxp import __version__
 from opengxp.cmc.server import cmc
+from opengxp.stability.server import stab
 
 mcp = FastMCP(
     "opengxp",
@@ -13,6 +14,7 @@ mcp = FastMCP(
     mask_error_details=True,
 )
 mcp.mount(cmc)
+mcp.mount(stab)
 
 
 def main() -> None:

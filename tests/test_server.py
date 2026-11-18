@@ -54,3 +54,22 @@ async def test_resources():
         assert el["pde_ug_per_day"]["parenteral"] == 10
         prompts = await c.list_prompts()
         assert any(p.name == "impurity_assessment_report" for p in prompts)
+
+
+async def test_stability_tools_via_protocol():
+    csv = "batch,time_months,value\n" + "\n".join(
+        f"{b},{t},{100 + d - 0.25 * t + e}" for b, d in [("A", 0), ("B", 0.2), ("C", -0.1)]
+        for t, e in zip([0, 3, 6, 9, 12], [0.1, -0.1, 0.05, -0.05, 0.0]))
+    async with Client(mcp) as c:
+        names = {t.name for t in await c.list_tools()}
+        assert {"stab_estimate_shelf_life", "stab_extrapolation_limit", "stab_detect_oot", "stab_storage_conditions"} <= names
+        r = await c.call_tool("stab_estimate_shelf_life", {
+            "attribute": {"name": "Assay", "direction": "decreasing", "lower_spec": 95},
+            "csv_text": csv, "storage": "room_temperature", "accelerated_significant_change": "none"})
+        sc = r.structured_content
+        assert sc["poolability"]["model"] in ("pooled", "common_slope", "separate")
+        assert sc["supported_shelf_life_months"] <= 24
+        e = await c.call_tool("stab_extrapolation_limit", {"storage": "refrigerated", "long_term_months": 12})
+        assert e.structured_content["max_shelf_life_months"] == 18
+        with pytest.raises(ToolError, match="csv_text"):
+            await c.call_tool("stab_estimate_shelf_life", {"attribute": {"name": "A", "direction": "decreasing", "lower_spec": 95}})
