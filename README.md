@@ -52,7 +52,7 @@ Prompt `sdtm_fix_loop` runs the self-correcting conformance loop. Setup: `pip in
 
 ## GxP Agent Gateway (`opengxp-gateway`)
 
-A control layer that sits in front of **any** MCP server (OpenGxP's own, or e.g. a LIMS/QMS server) so agent tool calls meet Part 11 / Annex 11 expectations. Design: [`docs/GATEWAY.md`](docs/GATEWAY.md).
+A control layer that sits in front of **any** MCP server (OpenGxP's own, or e.g. a LIMS/QMS server) so agent tool calls meet Part 11 / Annex 11 expectations. Design: [`docs/GATEWAY.md`](https://github.com/milangeorge2000/opengxp/blob/main/docs/GATEWAY.md).
 
 - **Identity**: OAuth token claims over HTTP, or a configured local user (recorded as weaker `local-config`).
 - **Role policy**: allow/deny tool globs per role; denied tools are hidden from the agent; `monitor` mode for pilots.
@@ -86,12 +86,15 @@ uv run pytest
 
 ## Use it
 ```bash
-uv run opengxp          # stdio MCP server
+uvx opengxp                       # stdio MCP server (all tools)
+uvx --from opengxp opengxp-gateway serve --policy policy.yaml   # same tools behind the GxP gateway
+pip install "opengxp[cdisc]"      # adds the CDISC CORE engine (Python 3.12)
 ```
+From a clone: `uv run opengxp`.
 Claude Desktop / Claude Code config:
 ```json
-{ "mcpServers": { "opengxp": { "command": "uv", "args": ["--directory", "/path/to/opengxp", "run", "opengxp"] } } }
+{ "mcpServers": { "opengxp": { "command": "uvx", "args": ["opengxp"] } } }
 ```
 
 ## Roadmap
-ICH M7, DailyMed label diffs. See `PLAN.md` and `DESIGN.md`.
+ICH M7, DailyMed label diffs. See [PLAN.md](https://github.com/milangeorge2000/opengxp/blob/main/PLAN.md), [DESIGN.md](https://github.com/milangeorge2000/opengxp/blob/main/DESIGN.md) and [OVERVIEW.md](https://github.com/milangeorge2000/opengxp/blob/main/OVERVIEW.md).

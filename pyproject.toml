@@ -1,11 +1,11 @@
 [project]
 name = "opengxp"
 version = "0.1.0"
-description = "Guideline-as-code MCP servers for regulated pharma work (ICH Q3A/Q3B/Q3C/Q3D and more)"
+description = "Guideline-as-code MCP servers for regulated pharma work: ICH impurity limits (Q3A-Q3D), ICH Q1E stability, CDISC CORE conformance, and a GxP audit/e-signature gateway for AI agents"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastmcp>=3",
+    "fastmcp>=4.2,<5",
     "numpy>=2.5.5",
     "pydantic>=2.14.3",
     "pyyaml>=6.0.3",
@@ -14,7 +14,27 @@ dependencies = [
 ]
 
 license = "Apache-2.0"
-keywords = ["mcp", "pharma", "ich", "cmc", "gxp", "fastmcp"]
+license-files = ["LICENSE"]
+authors = [{ name = "Milan Varghese George" }]
+keywords = ["mcp", "model-context-protocol", "pharma", "ich", "cmc", "gxp", "gmp", "stability", "cdisc", "sdtm", "part-11", "ai-agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+]
+
+[project.urls]
+Homepage = "https://github.com/milangeorge2000/opengxp"
+Source = "https://github.com/milangeorge2000/opengxp"
+Issues = "https://github.com/milangeorge2000/opengxp/issues"
+Changelog = "https://github.com/milangeorge2000/opengxp/releases"
 
 [project.scripts]
 opengxp = "opengxp.server:main"
@@ -22,7 +42,7 @@ opengxp-gateway = "opengxp.gateway.cli:main"
 
 [project.optional-dependencies]
 cdisc = [
-    "cdisc-rules-engine>=1.0.0",
+    "cdisc-rules-engine>=1.0.0; python_version < '3.13'",
 ]
 
 [build-system]
