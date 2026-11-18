@@ -48,6 +48,28 @@ Wraps the official open-source [CDISC CORE](https://github.com/cdisc-org/cdisc-r
 
 Prompt `sdtm_fix_loop` runs the self-correcting conformance loop. Setup: `pip install opengxp[cdisc]` (only needed for a repo clone), download a CORE release, set `OPENGXP_CORE` to its `core` executable (or to `core.py` in a clone).
 
+## GxP Agent Gateway (`opengxp-gateway`)
+
+A control layer that sits in front of **any** MCP server (OpenGxP's own, or e.g. a LIMS/QMS server) so agent tool calls meet Part 11 / Annex 11 expectations. Design: [`docs/GATEWAY.md`](docs/GATEWAY.md).
+
+- **Identity**: OAuth token claims over HTTP, or a configured local user (recorded as weaker `local-config`).
+- **Role policy**: allow/deny tool globs per role; denied tools are hidden from the agent; `monitor` mode for pilots.
+- **Electronic-signature approvals**: write tools (or any glob) need a named approver's signature (ID + password, printed name, meaning, reason, time); single-use, bound to the exact inputs, expiring; four-eyes by default.
+- **Validated-only roles**: only tools QA registered as validated (for the running version) are callable.
+- **Hash-chained audit trail**: one append-only record per call (who, which agent, tool + version, inputs or redacted hashes, output hash, approval/signature); `verify` detects edits, deletions, reordering.
+- **Reports**: audit-trail review report (Markdown/CSV) and a CSA-style validation summary per tool linked to pytest JUnit results.
+
+```bash
+opengxp-gateway add-signer qa_lead --name "Dr. A. Reviewer"
+opengxp-gateway serve --target opengxp --policy examples/gateway/policy.yaml --registry examples/gateway/registry.yaml
+opengxp-gateway serve --target "uvx some-other-mcp-server"     # proxy any MCP server
+opengxp-gateway approvals --status pending
+opengxp-gateway sign APR-1A2B3C4D --signer qa_lead --meaning approved --reason "Deviation DV-12 closed"
+opengxp-gateway verify && opengxp-gateway report --since 2026-11-01 > audit-review.md
+```
+
+The gateway is a control layer, not a validated system out of the box: each organisation validates it for its intended use.
+
 ## Validation
 Tests are built from the guidelines' own worked examples and tables:
 - Q3A(R2) and Q3B(R2) Attachment 2 examples (rounding + threshold comparison), Attachment 1 band edges
