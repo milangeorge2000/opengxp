@@ -50,6 +50,20 @@ Wraps the official open-source [CDISC CORE](https://github.com/cdisc-org/cdisc-r
 
 Prompt `sdtm_fix_loop` runs the self-correcting conformance loop. Setup: `pip install opengxp[cdisc]` (only needed for a repo clone), download a CORE release, set `OPENGXP_CORE` to its `core` executable (or to `core.py` in a clone).
 
+## v0.4: `ind` server (IND-enabling decisions)
+
+The numbers that decide whether and how a drug enters humans, which today live in spreadsheets and unlicensed web calculators.
+
+| Tool | What it does |
+|---|---|
+| `ind_ddi_risk` | ICH M12 (2024): per CYP, UGT and transporter, can in vitro data exclude a clinical interaction? Basic methods (Cmax,u/Ki,u < 0.02, gut CYP3A, TDI (kobs+kdeg)/kdeg < 1.25, mRNA fold-change, Table 1 transporter cutoffs), basic kinetic induction model, mechanistic static AUCR (0.80–1.25, inhibition and induction also alone), fu,p 1% floor, next step per target |
+| `ind_first_in_human_dose` | FDA 2005 MRSD: NOAEL → HED (Table 1 or the 0.33-exponent formula) → most sensitive species → ÷ safety factor; ICH S9 oncology mode (1/10 STD10, 1/6 HNSTD); flags when a MABEL is needed |
+| `ind_safety_margins` | hERG margin per ICH E14/S7B Q&A 1.2 (free high clinical Cmax,ss, 1% fu floor, lab-calibrated threshold, no invented cut-off) and exposure margins at the NOAEL |
+| `ind_tox_duration` | ICH M3(R2) Tables 1–2: minimum rodent / non-rodent repeated-dose tox duration for a trial or for marketing, per region, with footnotes |
+| `ind_metabolite_coverage` | ICH M3(R2) section 3 and Q&A: metabolites > 10% of total exposure, covered when animal exposure ≥ 50% of human (above human if the metabolite is the majority) |
+
+Resources: `ich://m12/kdeg`, `fda://mrsd-2005/conversion-factors`. Prompt: `ind_nonclinical_summary`.
+
 ## GxP Agent Gateway (`opengxp-gateway`)
 
 A control layer that sits in front of **any** MCP server (OpenGxP's own, or e.g. a LIMS/QMS server) so agent tool calls meet Part 11 / Annex 11 expectations. Design: [`docs/GATEWAY.md`](https://github.com/milangeorge2000/opengxp/blob/main/docs/GATEWAY.md).
@@ -78,6 +92,7 @@ Tests are built from the guidelines' own worked examples and tables:
 - Q3C(R9) Tables 1–4 and both acetonitrile Option 1/2 examples
 - Q3D(R2) Tables A.2.1, A.2.2, A.5.1 and the Appendix 4 Options 1 / 2a / 2b example
 - CORE adapter: unit-tested against a stand-in CLI writing CORE v1.0.0's JSON format, and integration-tested with the real CORE 1.0.0 release on the public CDISC pilot study SDTM data (509 rules, 9 domains, ~12 s): `OPENGXP_CORE=... OPENGXP_PILOT_SDTM=... uv run pytest tests/integration`
+- IND: every ICH M12 cutoff at and around its boundary, M12 Table 3 equations and Table 6 kdeg values; FDA 2005 Table 1 and the Appendix C rabbit example; ICH S9 Note 2; every row of ICH M3(R2) Tables 1–2; M3(R2) Q&A metabolite thresholds
 - Q1E: ANCOVA p-values, slopes, residual SD and confidence bounds match statsmodels to 1e-9; analytic crossing times; every branch of the extrapolation rules
 
 ```bash
@@ -97,4 +112,4 @@ Claude Desktop / Claude Code config:
 ```
 
 ## Roadmap
-ICH M7, DailyMed label diffs. See [PLAN.md](https://github.com/milangeorge2000/opengxp/blob/main/PLAN.md), [DESIGN.md](https://github.com/milangeorge2000/opengxp/blob/main/DESIGN.md) and [OVERVIEW.md](https://github.com/milangeorge2000/opengxp/blob/main/OVERVIEW.md).
+ICH M7, assay data QC (plate QC, dose-response fitting), metabolite ID from MS/MS, DailyMed label diffs. See [PLAN.md](https://github.com/milangeorge2000/opengxp/blob/main/PLAN.md), [DESIGN.md](https://github.com/milangeorge2000/opengxp/blob/main/DESIGN.md) and [OVERVIEW.md](https://github.com/milangeorge2000/opengxp/blob/main/OVERVIEW.md).

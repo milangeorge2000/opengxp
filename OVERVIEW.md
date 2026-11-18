@@ -93,8 +93,19 @@ Resource: `cdisc://runs/{run_id}/report`. Prompt: `sdtm_fix_loop` (a self-correc
 - a re-check of a few rules was being counted as "fixed" issues;
 - CORE returns several rule IDs joined in one string, which now get split.
 
+### Server 4: `ind` (IND-enabling decisions: ICH M12, FDA 2005, ICH S9, ICH E14/S7B, ICH M3(R2))
+The nonclinical numbers every IND or CTA needs: drug-interaction risk from in vitro data, the first-in-human starting dose, hERG and exposure margins, how long tox studies must run, and whether human metabolites are covered in tox species. All cutoffs were checked against the guideline PDFs (ICH M12 replaced the older FDA R1 ≥ 1.02 style cutoffs with Ki,u > 50 × Cmax,u).
+
+| Tool | What it does |
+|---|---|
+| `ind_ddi_risk` | ICH M12 (2024): per CYP, UGT and transporter, can in vitro data exclude a clinical interaction? Basic methods (Cmax,u/Ki,u < 0.02, gut CYP3A, TDI (kobs+kdeg)/kdeg < 1.25, mRNA fold-change, Table 1 transporter cutoffs), basic kinetic induction model, mechanistic static AUCR (0.80–1.25, inhibition and induction also alone), fu,p 1% floor, next step per target |
+| `ind_first_in_human_dose` | FDA 2005 MRSD: NOAEL → HED (Table 1 or the 0.33-exponent formula) → most sensitive species → ÷ safety factor; ICH S9 oncology mode (1/10 STD10, 1/6 HNSTD); flags when a MABEL is needed |
+| `ind_safety_margins` | hERG margin per ICH E14/S7B Q&A 1.2 (free high clinical Cmax,ss, 1% fu floor, lab-calibrated threshold, no invented cut-off) and exposure margins at the NOAEL |
+| `ind_tox_duration` | ICH M3(R2) Tables 1–2: minimum rodent / non-rodent repeated-dose tox duration for a trial or for marketing, per region, with footnotes |
+| `ind_metabolite_coverage` | ICH M3(R2) section 3 and Q&A: metabolites > 10% of total exposure, covered when animal exposure ≥ 50% of human (above human if the metabolite is the majority) |
+
 ### Tests
-- **120 unit tests pass.** One more integration test runs the real CORE on the pilot data; it is skipped unless `OPENGXP_CORE` and `OPENGXP_PILOT_SDTM` are set, and passes when they are.
+- **187 unit tests pass.** One more integration test runs the real CORE on the pilot data; it is skipped unless `OPENGXP_CORE` and `OPENGXP_PILOT_SDTM` are set, and passes when they are.
 - **Protocol-level tests** call the tools through an MCP client. They check output schemas, annotations, structured output, error messages and resources.
 
 ---
@@ -149,8 +160,8 @@ Legend: ✅ done · 🟡 partial / changed · ❌ not built
 | `guideline_version` input to pin a version | 🟡 | The version is reported in provenance but cannot be chosen; only one version of each guideline is encoded |
 | Gateway mounting all servers | ✅ | |
 | Middleware (structured logging, response-size guard) | ❌ | |
-| GitHub Actions CI | ❌ | No `.github/` workflows yet |
-| PyPI release (`uvx opengxp`) | ❌ | Runs from a clone today (`uv run opengxp`) |
+| GitHub Actions CI | ✅ | Linux and macOS, Python 3.12 and 3.13; JUnit evidence and validation summary |
+| PyPI release (`uvx opengxp`) | 🟡 | Release workflow ready; waiting for the PyPI trusted publisher to be added |
 | Docs site (MkDocs) | ❌ | README and this overview only |
 | Showcase agents (ImpurityScope, Shelf-Life Analyst, Label Watch) | ❌ | |
 | Web UI on Cloudflare Pages | ❌ | |
