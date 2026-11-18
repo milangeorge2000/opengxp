@@ -6,6 +6,7 @@ from fastmcp import FastMCP
 from opengxp import __version__
 from opengxp.cmc.server import cmc
 from opengxp.stability.server import stab
+from opengxp.cdisc.server import sdtm
 
 mcp = FastMCP(
     "opengxp",
@@ -15,6 +16,7 @@ mcp = FastMCP(
 )
 mcp.mount(cmc)
 mcp.mount(stab)
+mcp.mount(sdtm)
 
 
 def main() -> None:

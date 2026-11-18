@@ -22,6 +22,8 @@ async def test_tools_listed_with_schemas_and_annotations():
         tools = {t.name: t for t in await c.list_tools()}
     assert set(tools) >= {"cmc_impurity_thresholds", "cmc_residual_solvent_limit", "cmc_elemental_impurity_risk"}
     for t in tools.values():
+        if t.name.endswith("_core_status"):
+            continue  # setup probe, not a guideline result
         assert t.output_schema and "citations" in json.dumps(t.output_schema)
         assert t.annotations.read_only_hint is True and t.annotations.open_world_hint is False
         assert t.description and t.title
