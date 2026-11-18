@@ -1,0 +1,16 @@
+# Tool validation registry (company record). 'validated' is a QA decision with evidence.
+tools:
+  cmc_impurity_thresholds:
+    intended_use: Calculate ICH Q3A/Q3B thresholds when drafting impurity specifications (decision support; reviewed by analyst)
+    risk: medium
+    status: validated
+    version: "1.0"
+    evidence: ["tests/cmc/test_impurity_thresholds.py::*"]
+    validated_by: qa_lead
+    validated_on: "2026-11-18"
+  stab_estimate_shelf_life:
+    intended_use: Q1E shelf-life estimate for stability reports; statistician reviews output
+    risk: high
+    status: in_validation
+    version: "1.0"
+    evidence: ["tests/stability/test_shelf_life.py::*"]

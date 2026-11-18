@@ -1,0 +1,17 @@
+# Example GxP gateway policy. Copy and adapt; your QA owns this file (change-controlled).
+mode: enforce                 # monitor = log what would be blocked, block nothing (use for a pilot)
+require_identity: true
+default_role: viewer
+roles:
+  viewer:   {allow: ["cmc_*", "stab_storage_conditions", "stab_extrapolation_limit"]}
+  qc:       {allow: ["cmc_*", "stab_*"]}
+  datamgmt: {allow: ["sdtm_*"]}
+  admin:    {allow: ["*"]}
+validated_only_roles: [qc]    # QC may only use tools QA has registered as validated (see registry.yaml)
+approval:
+  tools: ["*update*", "*delete*", "*release*"]   # always need an e-signature
+  non_read_only: true                             # plus any tool not annotated read-only
+  ttl_minutes: 60
+  separate_signer: true                           # four-eyes: requester cannot approve own request
+redact_args: ["*password*", "*token*", "patient_*"]
+store_inputs: true
