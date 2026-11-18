@@ -75,3 +75,22 @@ async def test_stability_tools_via_protocol():
         assert e.structured_content["max_shelf_life_months"] == 18
         with pytest.raises(ToolError, match="csv_text"):
             await c.call_tool("stab_estimate_shelf_life", {"attribute": {"name": "A", "direction": "decreasing", "lower_spec": 95}})
+
+
+async def test_ind_tools_via_protocol():
+    async with Client(mcp) as c:
+        names = {t.name for t in await c.list_tools()}
+        assert {"ind_ddi_risk", "ind_first_in_human_dose", "ind_safety_margins", "ind_tox_duration",
+                "ind_metabolite_coverage"} <= names
+        r = await c.call_tool("ind_first_in_human_dose", {"studies": [
+            {"species": "rat", "dose_mg_per_kg": 50}, {"species": "dog", "dose_mg_per_kg": 10}]})
+        assert r.structured_content["selected_species"] == "dog"
+        d = await c.call_tool("ind_ddi_risk", {
+            "perpetrator": {"cmax_total_uM": 2, "fu_p": 0.05, "dose_mg": 100, "mw_g_per_mol": 400, "blood_to_plasma": 1},
+            "enzymes": [{"enzyme": "CYP3A", "ki_u_uM": 20}]})
+        assert d.structured_content["conclusions"][0]["risk_excluded"] is False
+        kdeg = json.loads((await c.read_resource("ich://m12/kdeg"))[0].text)
+        assert kdeg["hepatic"]["CYP2C9"] == 0.00011
+        with pytest.raises(ToolError, match="below 10"):
+            await c.call_tool("ind_first_in_human_dose", {"studies": [{"species": "dog", "dose_mg_per_kg": 1}],
+                                                         "safety_factor": 3})
