@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=3",
+    "numpy>=2.5.5",
     "pydantic>=2.14.3",
     "rapidfuzz>=3.14.6",
+    "scipy>=1.18.1",
 ]
 
 license = "Apache-2.0"
@@ -24,5 +26,7 @@ build-backend = "uv_build"
 dev = [
     "anyio>=4.16.0",
     "hypothesis>=6.170.15",
+    "pandas>=3.1.1",
     "pytest>=9.2.0",
+    "statsmodels>=0.15.0",
 ]
