@@ -18,6 +18,11 @@ keywords = ["mcp", "pharma", "ich", "cmc", "gxp", "fastmcp"]
 [project.scripts]
 opengxp = "opengxp.server:main"
 
+[project.optional-dependencies]
+cdisc = [
+    "cdisc-rules-engine>=1.0.0",
+]
+
 [build-system]
 requires = ["uv_build>=0.12.15,<0.13.0"]
 build-backend = "uv_build"
