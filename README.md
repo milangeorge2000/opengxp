@@ -34,11 +34,26 @@ the worked examples this code path is validated against) and a disclaimer.
 
 Data go in as structured points or plain CSV (`batch,time_months,value`). Resources: `ich://q1a/significant-change`, `who://climatic-zones`. Prompt: `shelf_life_justification`.
 
+## v0.3: `sdtm` server (CDISC CORE)
+
+Wraps the official open-source [CDISC CORE](https://github.com/cdisc-org/cdisc-rules-engine) CLI (MIT) instead of reimplementing it.
+
+| Tool | What it does |
+|---|---|
+| `sdtm_core_status` | Is CORE installed, which version; setup steps if not |
+| `sdtm_validate` | Runs CORE on SDTM / SEND / ADaM datasets (+ Define-XML, CT packages, rule subset); returns issues grouped by rule with counts, CDISC/FDA rule IDs and example records; stores the full report |
+| `sdtm_get_run` | Re-pages / re-filters a stored run (by domain, rule, dataset) without re-running CORE |
+| `sdtm_explain_rule` | What a CORE rule checks: message, IG references and sections, check logic |
+| `sdtm_diff_runs` | Fixed / new / unchanged issues per rule between two runs; `progress` and `clean` flags to drive a fix loop |
+
+Prompt `sdtm_fix_loop` runs the self-correcting conformance loop. Setup: `pip install opengxp[cdisc]` (only needed for a repo clone), download a CORE release, set `OPENGXP_CORE` to its `core` executable (or to `core.py` in a clone).
+
 ## Validation
 Tests are built from the guidelines' own worked examples and tables:
 - Q3A(R2) and Q3B(R2) Attachment 2 examples (rounding + threshold comparison), Attachment 1 band edges
 - Q3C(R9) Tables 1–4 and both acetonitrile Option 1/2 examples
 - Q3D(R2) Tables A.2.1, A.2.2, A.5.1 and the Appendix 4 Options 1 / 2a / 2b example
+- CORE adapter: CLI arguments, report parsing (CORE v1.0.0 JSON format), paging, filters, run diffs and rule explanations, tested against a stand-in CLI that writes that format
 - Q1E: ANCOVA p-values, slopes, residual SD and confidence bounds match statsmodels to 1e-9; analytic crossing times; every branch of the extrapolation rules
 
 ```bash
@@ -55,4 +70,4 @@ Claude Desktop / Claude Code config:
 ```
 
 ## Roadmap
-ICH M7, CDISC CORE, DailyMed label diffs. See `PLAN.md` and `DESIGN.md`.
+ICH M7, DailyMed label diffs. See `PLAN.md` and `DESIGN.md`.
