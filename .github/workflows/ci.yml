@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]   # gateway uses POSIX file locks; Windows not supported yet
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install (locked)
+        run: uv sync --locked --python 3.12
+
+      - name: Run tests
+        run: uv run pytest -q --junitxml=test-results/junit.xml
+
+      - name: Validation summary (CSA-style evidence)
+        if: always()
+        run: |
+          uv run opengxp-gateway --dir "$RUNNER_TEMP/gw" validation-summary \
+            --registry examples/gateway/registry.yaml \
+            --junit test-results/junit.xml > test-results/validation-summary.md
+          cat test-results/validation-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-evidence-${{ matrix.os }}
+          path: test-results/
+          retention-days: 90

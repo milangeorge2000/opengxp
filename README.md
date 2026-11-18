@@ -1,5 +1,7 @@
 # OpenGxP
 
+[![CI](https://github.com/milangeorge2000/opengxp/actions/workflows/ci.yml/badge.svg)](https://github.com/milangeorge2000/opengxp/actions/workflows/ci.yml)
+
 **Guideline-as-code MCP servers for the regulated half of drug development.**
 
 Everyone has built MCP servers that *look things up* (PubMed, ChEMBL, trials, FAERS). OpenGxP builds
