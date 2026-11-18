@@ -105,6 +105,7 @@ class DiffResult(GxPResult):
     new: int
     unchanged: int
     by_rule: list[RuleCount]
+    rules_not_compared: list[str] = Field(default_factory=list, description="Rules run in only one of the two runs.")
     clean: bool = Field(description="True when the after-run has no issues.")
     progress: bool = Field(description="True when issues went down. Stop a fix loop when false twice running.")
 
@@ -141,6 +142,16 @@ def _domain_of(dataset: str | None) -> str:
     return (dataset or "").split(".")[0].upper()[:4]
 
 
+def _split_ids(rules: dict, ids: list[str], field: str) -> list[str]:
+    """CORE joins several rule IDs into one string ('CG0082, TIG0347'); return them separately."""
+    out = set()
+    for i in ids:
+        for part in str((rules.get(i) or {}).get(field) or "").split(","):
+            if part.strip():
+                out.add(part.strip())
+    return sorted(out)
+
+
 def _ex(d: dict) -> IssueExample:
     vals = d.get("values")
     return IssueExample(dataset=d.get("dataset"), usubjid=str(d.get("USUBJID") or "") or None,
@@ -171,8 +182,8 @@ def summarise(report: dict, run_id: str, standard: str, version: str, *, group_b
         ids = sorted({str(d.get("core_id")) for d in ds})
         groups.append(IssueGroup(
             key=k, core_ids=ids,
-            cdisc_rule_ids=sorted({str(rules[i].get("cdisc_rule_id")) for i in ids if i in rules and rules[i].get("cdisc_rule_id")}),
-            fda_rule_ids=sorted({str(rules[i].get("fda_rule_id")) for i in ids if i in rules and rules[i].get("fda_rule_id")}),
+            cdisc_rule_ids=_split_ids(rules, ids, "cdisc_rule_id"),
+            fda_rule_ids=_split_ids(rules, ids, "fda_rule_id"),
             message=ds[0].get("message") or "", datasets=sorted({str(d.get("dataset")) for d in ds}),
             count=len(ds), examples=[_ex(d) for d in ds[:examples_per_group]]))
     groups.sort(key=lambda g: (-g.count, g.key))
@@ -218,8 +229,13 @@ def summarise(report: dict, run_id: str, standard: str, version: str, *, group_b
 
 def diff_runs(before_id: str, after_id: str) -> DiffResult:
     b, a = load_run(before_id)["report"], load_run(after_id)["report"]
-    kb = {_issue_key(d) for d in _details(b)}
-    ka = {_issue_key(d) for d in _details(a)}
+    # Only rules executed in BOTH runs can be compared; a rule-subset re-run must not count as "fixed".
+    ran_b = {r.get("core_id") for r in _rules(b)}
+    ran_a = {r.get("core_id") for r in _rules(a)}
+    both = ran_b & ran_a if ran_b and ran_a else ran_b | ran_a | {d.get("core_id") for d in _details(b) + _details(a)}
+    not_compared = sorted(str(x) for x in (ran_b ^ ran_a) if x)
+    kb = {_issue_key(d) for d in _details(b) if d.get("core_id") in both}
+    ka = {_issue_key(d) for d in _details(a) if d.get("core_id") in both}
     cb, ca = defaultdict(int), defaultdict(int)
     for k in kb:
         cb[k[0]] += 1
@@ -229,12 +245,17 @@ def diff_runs(before_id: str, after_id: str) -> DiffResult:
                      key=lambda x: (x.after - x.before, x.core_id))
     fixed, new = len(kb - ka), len(ka - kb)
     return DiffResult(
-        summary=f"{fixed} issues fixed, {new} new, {len(ka & kb)} unchanged; {len(ka)} remain.",
-        findings=[Finding(level="warning", code="NEW_ISSUES", message=f"{new} issues appeared that were not in the earlier run.")] if new else [],
+        summary=(f"{fixed} issues fixed, {new} new, {len(ka & kb)} unchanged; {len(ka)} remain"
+                 f" across {len(both)} rules run in both" + (f" ({len(not_compared)} rules ran in only one run, not compared)." if not_compared else ".")),
+        findings=([Finding(level="warning", code="NEW_ISSUES", message=f"{new} issues appeared that were not in the earlier run.")] if new else [])
+                 + ([Finding(level="info", code="RULES_NOT_COMPARED",
+                             message=f"{len(not_compared)} rules ran in only one of the runs (e.g. a rule_ids re-check) and are excluded.")]
+                    if not_compared else []),
         citations=[Citation(guideline="CDISC CORE", section="Issue_Details", rule="Issue identity = rule, dataset, subject, record, variables.", url=CORE_URL)],
         provenance=provenance("sdtm_diff_runs", "CORE", dict(b=before_id, a=after_id), ["set-difference on issue identity"]),
         before_run=before_id, after_run=after_id, fixed=fixed, new=new, unchanged=len(ka & kb), by_rule=by_rule,
-        clean=len(ka) == 0, progress=len(ka) < len(kb),
+        rules_not_compared=not_compared,
+        clean=not _details(a), progress=len(ka) < len(kb),
     )
 
 

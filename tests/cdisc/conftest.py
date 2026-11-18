@@ -24,7 +24,7 @@ def make_report(n_ae=4, n_dm=2, with_error=True):
         "Issue_Details": det,
         "Rules_Report": [
             {"core_id": "CORE-000001", "version": "1", "cdisc_rule_id": "CG0001", "fda_rule_id": "SD1022", "message": "AESTDTC is after AEENDTC", "status": "ISSUE REPORTED"},
-            {"core_id": "CORE-000123", "version": "1", "cdisc_rule_id": "CG0123", "fda_rule_id": "", "message": "ARMCD is null", "status": "ISSUE REPORTED"},
+            {"core_id": "CORE-000123", "version": "1", "cdisc_rule_id": "CG0123, TIG0347", "fda_rule_id": "", "message": "ARMCD is null", "status": "ISSUE REPORTED"},
             {"core_id": "CORE-000500", "version": "1", "cdisc_rule_id": "CG0500", "fda_rule_id": "", "message": "n/a", "status": "SKIPPED"},
             {"core_id": "CORE-000999", "version": "1", "cdisc_rule_id": "CG0999", "fda_rule_id": "", "message": "x", "status": "EXECUTION ERROR"},
         ],

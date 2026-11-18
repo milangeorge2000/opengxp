@@ -36,6 +36,7 @@ async def test_validate_groups_by_rule_and_builds_cli(core_env):
     assert (g["key"], g["count"], g["cdisc_rule_ids"], g["fda_rule_ids"]) == ("CORE-000001", 4, ["CG0001"], ["SD1022"])
     assert len(g["examples"]) == 3 and g["examples"][0]["variables"] == ["AESTDTC", "AEENDTC"]
     assert len(r["execution_errors"]) == 1
+    assert r["groups"][1]["cdisc_rule_ids"] == ["CG0123", "TIG0347"]       # CORE joins IDs with commas
     assert {f["code"] for f in r["findings"]} == {"CONFORMANCE_ISSUES", "RULE_EXECUTION_ERRORS", "RULES_SKIPPED"}
 
 
@@ -87,6 +88,17 @@ async def test_status_and_errors(core_env, monkeypatch, tmp_path):
     assert not s["configured"] and "releases" in s["setup"]
     with pytest.raises(ToolError, match="not configured"):
         await call("sdtm_validate", {"datasets_path": str(core_env["data"])})
+
+
+async def test_rule_subset_rerun_is_not_counted_as_fixed(core_env):
+    full = await call("sdtm_validate", {"datasets_path": str(core_env["data"])})
+    rpt = make_report()
+    rpt["Rules_Report"] = [r for r in rpt["Rules_Report"] if r["core_id"] == "CORE-000123"]
+    core_env["report"].write_text(json.dumps(rpt))
+    sub = await call("sdtm_validate", {"datasets_path": str(core_env["data"]), "rule_ids": ["CORE-000123"]})
+    d = await call("sdtm_diff_runs", {"before_run_id": full["run_id"], "after_run_id": sub["run_id"]})
+    assert (d["fixed"], d["unchanged"], d["progress"]) == (0, 2, False)
+    assert "CORE-000001" in d["rules_not_compared"]
 
 
 def test_run_id_path_traversal_rejected(core_env):
