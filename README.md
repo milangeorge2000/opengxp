@@ -53,7 +53,7 @@ Tests are built from the guidelines' own worked examples and tables:
 - Q3A(R2) and Q3B(R2) Attachment 2 examples (rounding + threshold comparison), Attachment 1 band edges
 - Q3C(R9) Tables 1–4 and both acetonitrile Option 1/2 examples
 - Q3D(R2) Tables A.2.1, A.2.2, A.5.1 and the Appendix 4 Options 1 / 2a / 2b example
-- CORE adapter: CLI arguments, report parsing (CORE v1.0.0 JSON format), paging, filters, run diffs and rule explanations, tested against a stand-in CLI that writes that format
+- CORE adapter: unit-tested against a stand-in CLI writing CORE v1.0.0's JSON format, and integration-tested with the real CORE 1.0.0 release on the public CDISC pilot study SDTM data (509 rules, 9 domains, ~12 s): `OPENGXP_CORE=... OPENGXP_PILOT_SDTM=... uv run pytest tests/integration`
 - Q1E: ANCOVA p-values, slopes, residual SD and confidence bounds match statsmodels to 1e-9; analytic crossing times; every branch of the extrapolation rules
 
 ```bash
