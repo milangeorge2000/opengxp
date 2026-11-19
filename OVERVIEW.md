@@ -94,7 +94,7 @@ Resource: `cdisc://runs/{run_id}/report`. Prompt: `sdtm_fix_loop` (a self-correc
 - CORE returns several rule IDs joined in one string, which now get split.
 
 ### Server 4: `ind` (IND-enabling decisions: ICH M12, FDA 2005, ICH S9, ICH E14/S7B, ICH M3(R2))
-The nonclinical numbers every IND or CTA needs: drug-interaction risk from in vitro data, the first-in-human starting dose, hERG and exposure margins, how long tox studies must run, and whether human metabolites are covered in tox species. All cutoffs were checked against the guideline PDFs (ICH M12 replaced the older FDA R1 ≥ 1.02 style cutoffs with Ki,u > 50 × Cmax,u).
+The nonclinical numbers every IND or CTA needs: drug-interaction risk from in vitro data, the first-in-human starting dose, hERG and exposure margins, how long tox studies must run, and whether human metabolites are covered in tox species. All cutoffs were checked against the guideline PDFs (ICH M12 writes the basic cutoffs as concentration ratios, e.g. Ki,u > 50 × Cmax,u, which is algebraically the same as the older FDA R1 = 1 + Cmax,u/Ki,u < 1.02).
 
 | Tool | What it does |
 |---|---|
