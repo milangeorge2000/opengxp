@@ -1,6 +1,7 @@
 # OpenGxP
 
 [![CI](https://github.com/milangeorge2000/opengxp/actions/workflows/ci.yml/badge.svg)](https://github.com/milangeorge2000/opengxp/actions/workflows/ci.yml)
+[![M8ven Score](https://m8ven.ai/badge/mcp/milangeorge2000-opengxp-1vhxk8?v=a956af66d5ef1c2bd739afc3a494e4ed)](https://m8ven.ai/mcp/milangeorge2000-opengxp-1vhxk8?s=readme)
 
 **Guideline-as-code MCP servers for the regulated half of drug development.**
 
