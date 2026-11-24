@@ -1,0 +1,54 @@
+name: Load FDA reference data
+
+# Run by hand after FDA publishes a release (IID: quarterly, January/April/July/October).
+# Copy the file link from https://www.fda.gov/drugs/drug-approvals-and-databases/inactive-ingredients-database-download
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "FDA download URL of the IID zip, e.g. https://www.fda.gov/media/195788/download"
+        required: true
+      label:
+        description: 'Release label, e.g. "October 2026"'
+        required: true
+      publish:
+        description: "Publish after loading (otherwise stage only)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ref-ingest
+  cancel-in-progress: false
+
+jobs:
+  iid:
+    runs-on: ubuntu-latest
+    environment: reference-data        # protect with required reviewers; holds the REF_INGEST_DSN secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked --extra ingest
+      - name: Download from FDA
+        env:
+          SOURCE_URL: ${{ inputs.source_url }}
+        run: |
+          case "$SOURCE_URL" in https://www.fda.gov/media/*) ;; *) echo "Only https://www.fda.gov/media/ links are accepted"; exit 1;; esac
+          mkdir -p "$RUNNER_TEMP/iid" && curl -fsSL "$SOURCE_URL" -o "$RUNNER_TEMP/iid/iid.zip"
+          unzip -o -q "$RUNNER_TEMP/iid/iid.zip" -d "$RUNNER_TEMP/iid/x" && ls -l "$RUNNER_TEMP/iid/x"
+      - name: Validate (dry run)
+        env:
+          LABEL: ${{ inputs.label }}
+          SOURCE_URL: ${{ inputs.source_url }}
+        run: uv run opengxp-ref-ingest iid --file "$RUNNER_TEMP/iid/x/IIR_OCOMM.xlsx" --label "$LABEL" --source-url "$SOURCE_URL" --dry-run
+      - name: Load
+        env:
+          REF_INGEST_DSN: ${{ secrets.REF_INGEST_DSN }}
+          LABEL: ${{ inputs.label }}
+          SOURCE_URL: ${{ inputs.source_url }}
+          PUBLISH: ${{ inputs.publish }}
+        run: |
+          extra=""; [ "$PUBLISH" = "true" ] || extra="--no-publish"
+          uv run opengxp-ref-ingest iid --file "$RUNNER_TEMP/iid/x/IIR_OCOMM.xlsx" --label "$LABEL" --source-url "$SOURCE_URL" $extra

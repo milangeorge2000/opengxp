@@ -50,3 +50,33 @@ jobs:
           name: test-evidence-${{ matrix.os }}-py${{ matrix.python }}
           path: test-results/
           retention-days: 90
+
+  ref-db:
+    name: Reference data access control (Postgres + RLS)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: pg
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install (locked)
+        run: uv sync --locked
+      - name: Migration, row-level security and end-to-end tool tests
+        env:
+          OPENGXP_TEST_PG: postgresql://postgres:pg@localhost:5432/postgres
+        run: uv run pytest -q tests/ref --junitxml=test-results/junit-ref.xml
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-evidence-ref-db
+          path: test-results/
+          retention-days: 90
