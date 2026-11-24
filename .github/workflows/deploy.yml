@@ -1,0 +1,57 @@
+name: Deploy database
+
+# staging branch -> Supabase project of the 'staging' environment (automatic)
+# main branch    -> Supabase project of the 'production' environment (waits for the environment's required reviewers)
+# Each GitHub environment holds its own secret SUPABASE_DB_URL (connection string of the migration owner).
+# Until that secret exists, the job reports that it was skipped instead of failing.
+on:
+  push:
+    branches: [staging, main]
+    paths: ["supabase/migrations/**", ".github/workflows/deploy.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: Apply migrations (${{ github.ref_name == 'main' && 'production' || 'staging' }})
+    if: github.ref_name == 'staging' || github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check configuration
+        id: cfg
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "::notice::SUPABASE_DB_URL is not set for this environment; nothing deployed."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif [ ! -d supabase/migrations ]; then
+            echo "::notice::No supabase/migrations on this branch; nothing deployed."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: supabase/setup-cli@v1
+        if: steps.cfg.outputs.skip != 'true'
+        with:
+          version: latest
+      - name: Apply pending migrations
+        if: steps.cfg.outputs.skip != 'true'
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: supabase db push --db-url "$DB_URL"
+      - name: Smoke check
+        if: steps.cfg.outputs.skip != 'true'
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          n=$(psql "$DB_URL" -tAc "select count(*) from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'api'")
+          rls=$(psql "$DB_URL" -tAc "select count(*) from pg_tables where schemaname = 'ref' and not rowsecurity")
+          echo "api functions: $n; ref tables without row-level security: $rls"
+          test "$n" -gt 0 && test "$rls" -eq 0
