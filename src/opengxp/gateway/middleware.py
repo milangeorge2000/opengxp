@@ -12,7 +12,7 @@ from fastmcp.server.middleware import Middleware, MiddlewareContext
 
 from opengxp.gateway.approvals import ApprovalStore
 from opengxp.gateway.audit import AuditLog, canonical, sha256
-from opengxp.gateway.policy import Policy, decide, redact
+from opengxp.gateway.policy import Policy, decide_roles, redact
 from opengxp.gateway.registry import Registry
 
 
@@ -21,6 +21,11 @@ class Actor:
     user_id: str | None
     role: str | None
     auth_method: str
+    roles: tuple[str, ...] = ()
+
+    def __post_init__(self):
+        if not self.roles and self.role:
+            self.roles = (self.role,)
 
 
 def resolve_actor(fctx: Any) -> Actor:
@@ -31,9 +36,12 @@ def resolve_actor(fctx: Any) -> Actor:
         tok = None
     if tok is not None:
         claims = getattr(tok, "claims", None) or {}
+        # 'roles' (list) is set by the OpenGxP Supabase access-token hook from ref.user_roles. A user may hold
+        # several roles; a tool is allowed if any of them allows it.
         roles = claims.get("roles") or claims.get("role") or []
-        role = roles[0] if isinstance(roles, list) and roles else (roles or None)
-        return Actor(claims.get("sub") or getattr(tok, "client_id", None), role, "oauth-token")
+        roles = tuple(r for r in (roles if isinstance(roles, list) else [roles]) if isinstance(r, str) and r)
+        return Actor(claims.get("sub") or getattr(tok, "client_id", None), roles[0] if roles else None,
+                     "oauth-token", roles)
     user = os.environ.get("OPENGXP_USER")
     return Actor(user, os.environ.get("OPENGXP_ROLE"), "local-config" if user else "none")
 
@@ -89,7 +97,7 @@ class GxPGatewayMiddleware(Middleware):
         out = []
         for t in tools:
             rec = self.registry.record_for(t.name, t.meta, t.version)
-            d = decide(self.policy, actor.role, bool(actor.user_id), t.name, _read_only(t), rec.status == "validated")
+            d = decide_roles(self.policy, actor.roles, bool(actor.user_id), t.name, _read_only(t), rec.status == "validated")
             if not d.allowed and self.policy.mode == "enforce":
                 continue
             meta = dict(t.meta or {})
@@ -108,13 +116,13 @@ class GxPGatewayMiddleware(Middleware):
         args_hash = sha256(canonical(args))
         base = {
             "system": self.system,
-            "actor": {"user_id": actor.user_id, "role": actor.role, "auth_method": actor.auth_method},
+            "actor": {"user_id": actor.user_id, "role": actor.role, "roles": list(actor.roles), "auth_method": actor.auth_method},
             "agent": _client(fctx),
             "tool": name, "tool_version": version, "validation_status": rec.status,
             "inputs": redact(self.policy, args) if self.policy.store_inputs else None,
             "inputs_sha256": args_hash,
         }
-        d = decide(self.policy, actor.role, bool(actor.user_id), name, _read_only(tool), rec.status == "validated")
+        d = decide_roles(self.policy, actor.roles, bool(actor.user_id), name, _read_only(tool), rec.status == "validated")
         enforce = self.policy.mode == "enforce"
 
         if not d.allowed:

@@ -25,7 +25,7 @@ def data_dir(arg: str | None) -> Path:
 
 
 def build_gateway(target: str | FastMCP, *, policy: Policy, registry: Registry, root: Path,
-                  system_name: str = "opengxp-gateway") -> FastMCP:
+                  system_name: str = "opengxp-gateway", auth=None) -> FastMCP:
     """Wrap a target with the GxP middleware. target: 'opengxp', a FastMCP server, a command line
     ('uvx some-mcp-server'), an MCP URL, or a path to an mcp.json config."""
     if isinstance(target, FastMCP):
@@ -41,7 +41,7 @@ def build_gateway(target: str | FastMCP, *, policy: Policy, registry: Registry, 
             spec = {"mcpServers": {"target": {"command": parts[0], "args": parts[1:]}}}
         inner = create_proxy(spec)
     gw = FastMCP(system_name, instructions="All tool calls pass through a GxP gateway: role-based access, "
-                 "electronic-signature approvals and a hash-chained audit trail.")
+                 "electronic-signature approvals and a hash-chained audit trail.", auth=auth)
     gw.mount(inner)
     gw.add_middleware(GxPGatewayMiddleware(policy, AuditLog(root / "audit.jsonl"), ApprovalStore(root), registry,
                                            system_name))
@@ -59,6 +59,10 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--name", default="opengxp-gateway")
     s.add_argument("--transport", choices=["stdio", "http"], default="stdio")
     s.add_argument("--port", type=int, default=8765)
+    s.add_argument("--auth", choices=["none", "supabase"], default="none",
+                   help="HTTP only. supabase: users sign in with Supabase Auth (OAuth); their roles come from the "
+                        "token's 'roles' claim and the same token is forwarded to the ref data service")
+    s.add_argument("--public-url", help="Public base URL of this gateway (needed for --auth supabase)")
 
     sub.add_parser("verify", help="Verify the audit-trail hash chain")
     r = sub.add_parser("report", help="Audit-trail review report")
@@ -84,8 +88,20 @@ def main(argv: list[str] | None = None) -> int:
     root.mkdir(parents=True, exist_ok=True)
 
     if args.cmd == "serve":
+        auth = None
+        if args.auth == "supabase":
+            if args.transport != "http" or not args.public_url:
+                print("--auth supabase needs --transport http and --public-url", file=sys.stderr)
+                return 2
+            from fastmcp.server.auth.providers.supabase import SupabaseProvider
+
+            from opengxp.ref.client import config as ref_config
+            auth = SupabaseProvider(project_url=ref_config()[0], base_url=args.public_url)
+        elif args.transport == "http":
+            print("warning: HTTP without --auth: every caller is the OPENGXP_USER from the environment. "
+                  "Use --auth supabase for attributable multi-user access.", file=sys.stderr)
         gw = build_gateway(args.target, policy=Policy.load(args.policy), registry=Registry(args.registry), root=root,
-                           system_name=args.name)
+                           system_name=args.name, auth=auth)
         if args.transport == "http":
             gw.run(transport="http", port=args.port, show_banner=False)
         else:

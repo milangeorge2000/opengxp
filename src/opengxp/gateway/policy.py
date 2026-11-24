@@ -71,6 +71,19 @@ def decide(policy: Policy, role: str | None, identified: bool, tool: str, read_o
     return Decision(True, needs, "approval required" if needs else "permitted")
 
 
+def decide_roles(policy: Policy, roles: tuple[str, ...] | list[str], identified: bool, tool: str, read_only: bool,
+                 validated: bool) -> Decision:
+    """Decide for a user holding several roles: allowed if any role allows the tool (each role's own
+    validated-only rule applies); otherwise the first role's refusal is returned."""
+    first: Decision | None = None
+    for role in (roles or [None]):
+        d = decide(policy, role, identified, tool, read_only, validated)
+        if d.allowed:
+            return d
+        first = first or d
+    return first
+
+
 def redact(policy: Policy, args: dict) -> dict:
     from opengxp.gateway.audit import canonical, sha256
     out = {}

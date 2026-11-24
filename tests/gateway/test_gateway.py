@@ -10,7 +10,7 @@ from opengxp.core import GxPInputError
 from opengxp.gateway.approvals import ApprovalStore
 from opengxp.gateway.audit import AuditLog
 from opengxp.gateway.cli import build_gateway, main
-from opengxp.gateway.policy import Policy, decide
+from opengxp.gateway.policy import Policy, RoleRule, decide
 from opengxp.gateway.registry import Registry
 from opengxp.gateway.reports import audit_report, validation_summary
 from tests.gateway.target_server import srv
@@ -109,7 +109,7 @@ async def test_read_only_call_is_audited(gw):
         r = await c.call_tool("get_batch", {"batch_id": "B1"})
     assert r.structured_content["status"] == "released"
     rec = log_of(gw.root)[-1]
-    assert rec["event"] == "executed" and rec["actor"] == {"user_id": "analyst1", "role": "qc", "auth_method": "local-config"}
+    assert rec["event"] == "executed" and rec["actor"] == {"user_id": "analyst1", "role": "qc", "roles": ["qc"], "auth_method": "local-config"}
     assert rec["inputs"] == {"batch_id": "B1"} and len(rec["outputs_sha256"]) == 64
     assert rec["output_summary"] == "Batch B1: released" and rec["validation_status"] == "not_validated"
     assert rec["agent"]["name"] == "fastmcp" and rec["agent"]["version"]
@@ -226,3 +226,14 @@ def test_validation_summary_with_junit(tmp_path):
     md = validation_summary(Registry(reg), [("t1", None, None), ("t2", {"validated_against": "ICH examples"}, "1.0")], junit)
     assert "1 passed, 1 failed" in md and "NOT validated: tests failing" in md
     assert "self_declared" in md and "ICH examples" in md
+
+
+def test_multiple_roles_any_allows():
+    from opengxp.gateway.policy import decide_roles
+    p = Policy(roles={"qc": RoleRule(allow=["cmc_*"]), "formulation": RoleRule(allow=["ref_*"])},
+               validated_only_roles=["qc"])
+    assert decide_roles(p, ("qc", "formulation"), True, "ref_check_excipients", True, False).allowed
+    assert decide_roles(p, ("qc", "formulation"), True, "cmc_x", True, True).allowed
+    d = decide_roles(p, ("qc", "formulation"), True, "sdtm_validate", True, True)
+    assert not d.allowed and "'qc'" in d.reason
+    assert not decide_roles(p, (), True, "ref_check_excipients", True, True).allowed
