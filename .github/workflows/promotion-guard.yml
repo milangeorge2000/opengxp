@@ -1,0 +1,33 @@
+name: Promotion guard
+
+# Code moves one way: feature/* -> develop -> staging -> main. Hotfixes (hotfix/*) may go straight to
+# staging or main and must then be merged back into develop. This check fails any other PR route.
+on:
+  pull_request:
+    branches: [staging, main]
+    types: [opened, reopened, synchronize, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  route:
+    name: Allowed promotion route
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          case "$BASE:$HEAD" in
+            staging:develop|staging:hotfix/*) ok=1 ;;
+            main:staging|main:hotfix/*) ok=1 ;;
+            *) ok=0 ;;
+          esac
+          if [ "$ok" = 1 ]; then
+            echo "Allowed: $HEAD -> $BASE"
+          else
+            echo "::error::$HEAD -> $BASE is not an allowed route. Use feature/* -> develop -> staging -> main (or hotfix/*)."
+            exit 1
+          fi
