@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=4.2,<5",
+    "httpx2>=2.16",
     "numpy>=2.5.5",
     "pydantic>=2.14.3",
     "pyyaml>=6.0.3",
@@ -39,10 +40,16 @@ Changelog = "https://github.com/milangeorge2000/opengxp/releases"
 [project.scripts]
 opengxp = "opengxp.server:main"
 opengxp-gateway = "opengxp.gateway.cli:main"
+opengxp-ref = "opengxp.ref.session:main"
+opengxp-ref-ingest = "opengxp.ref.iid_ingest:main"
 
 [project.optional-dependencies]
 cdisc = [
     "cdisc-rules-engine>=1.0.0; python_version < '3.13'",
+]
+ingest = [
+    "openpyxl>=3.1",
+    "psycopg[binary]>=3.2",
 ]
 
 [build-system]
@@ -53,7 +60,9 @@ build-backend = "uv_build"
 dev = [
     "anyio>=4.16.0",
     "hypothesis>=6.170.15",
+    "openpyxl>=3.1",
     "pandas>=3.1.1",
+    "psycopg[binary]>=3.2",
     "pytest>=9.2.0",
     "statsmodels>=0.15.0",
 ]

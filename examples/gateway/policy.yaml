@@ -2,11 +2,14 @@
 mode: enforce                 # monitor = log what would be blocked, block nothing (use for a pilot)
 require_identity: true
 default_role: viewer
-roles:
-  viewer:   {allow: ["cmc_*", "stab_storage_conditions", "stab_extrapolation_limit"]}
-  qc:       {allow: ["cmc_*", "stab_*"]}
-  datamgmt: {allow: ["sdtm_*"]}
-  admin:    {allow: ["*"]}
+roles:                        # same role names as ref.user_roles in the reference database (one assignment, two layers)
+  viewer:      {allow: ["cmc_*", "stab_storage_conditions", "stab_extrapolation_limit", "ref_*"]}
+  qc:          {allow: ["cmc_*", "stab_*"]}
+  datamgmt:    {allow: ["sdtm_*"]}
+  formulation: {allow: ["cmc_*", "stab_*", "ref_*"]}
+  generics:    {allow: ["cmc_*", "stab_*", "ref_*"]}
+  sourcing:    {allow: ["ref_resolve_*", "ref_list_vocab", "ref_dataset_status"]}
+  admin:       {allow: ["*"]}
 validated_only_roles: [qc]    # QC may only use tools QA has registered as validated (see registry.yaml)
 approval:
   tools: ["*update*", "*delete*", "*release*"]   # always need an e-signature

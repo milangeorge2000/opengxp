@@ -24,6 +24,10 @@ async def test_tools_listed_with_schemas_and_annotations():
     for t in tools.values():
         if t.name.endswith("_core_status"):
             continue  # setup probe, not a guideline result
+        if t.name.startswith("ref_"):  # online reference-data lookups: read-only, but open-world (tested in tests/ref)
+            assert t.annotations.read_only_hint is True and t.annotations.open_world_hint is True
+            assert t.output_schema and "dataset" in json.dumps(t.output_schema) and t.description and t.title
+            continue
         assert t.output_schema and "citations" in json.dumps(t.output_schema)
         assert t.annotations.read_only_hint is True and t.annotations.open_world_hint is False
         assert t.description and t.title
