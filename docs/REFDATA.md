@@ -126,9 +126,10 @@ Synonym table, PSG extraction, dissolution, DMF/CEP, vector search, per-user rat
 3. **API settings → Exposed schemas:** add `api`. Do **not** expose `ref`.
 4. **Authentication → Hooks → Custom access token:** select `ref.custom_access_token_hook`.
 5. Create the ingest login (SQL editor), store its connection string as the `REF_INGEST_DSN` secret of the
-   `reference-data` GitHub environment, and protect that environment with required reviewers:
+   `staging` or `production` GitHub environment (production protected with required reviewers; see
+   [RELEASE.md](RELEASE.md)):
    `create role ingest_bot login password '<generated>' in role ref_ingest;`
-6. Load data: run the *Load FDA reference data* workflow with the FDA file link and label.
+6. Load data: run the *Load FDA reference data* workflow with the FDA file link and label, into `staging` first, then `production`.
 7. Assign roles (admin, change-controlled): `insert into ref.user_roles (user_id, role) values ('<auth user id>', 'formulation');`
    Removing the row revokes data access immediately; every change is written to `ref.role_audit`.
 8. Clients set `OPENGXP_REF_URL` and `OPENGXP_REF_KEY` (the publishable key; secret / service_role keys are refused).

@@ -11,6 +11,11 @@ on:
       label:
         description: 'Release label, e.g. "October 2026"'
         required: true
+      environment:
+        description: "Where to load: staging first, production after QA has checked staging"
+        type: choice
+        options: [staging, production]
+        default: staging
       publish:
         description: "Publish after loading (otherwise stage only)"
         type: boolean
@@ -20,13 +25,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: ref-ingest
+  group: ref-ingest-${{ inputs.environment }}
   cancel-in-progress: false
 
 jobs:
   iid:
     runs-on: ubuntu-latest
-    environment: reference-data        # protect with required reviewers; holds the REF_INGEST_DSN secret
+    environment: ${{ inputs.environment }}   # each holds its own REF_INGEST_DSN; production has required reviewers
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
