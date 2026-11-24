@@ -65,6 +65,24 @@ The numbers that decide whether and how a drug enters humans, which today live i
 
 Resources: `ich://m12/kdeg`, `fda://mrsd-2005/conversion-factors`. Prompt: `ind_nonclinical_summary`.
 
+## v0.5: `ref` server (FDA reference data, role-based)
+
+Exact, versioned lookups of public FDA data that teams check by hand today. Phase 1: the **Inactive Ingredient
+Database** (IID). Data lives in Supabase Postgres, loaded quarterly; every answer names the FDA release, file hash and row.
+
+| Tool | What it does |
+|---|---|
+| `ref_resolve_ingredient` | User's words, UNII or CAS → FDA's exact IID name, ranked (exact, UNII/CAS, prefix, similar); asks when ambiguous |
+| `ref_resolve_dosage_form` | e.g. "film coated tablet" → `TABLET, FILM COATED` (optionally per route) |
+| `ref_check_excipients` | A formula vs the highest FDA-approved level for the same route and dosage form: within / above precedent, not comparable, no precedent; per-unit and daily (mg × units/day) limits |
+| `ref_excipient_precedents` | Every route and dosage form where FDA lists an excipient, with maximum levels |
+| `ref_list_vocab`, `ref_dataset_status` | FDA's exact routes, forms and units; which releases your account can read |
+
+**Access control, two layers, one set of roles** (`viewer`, `formulation`, `generics`, `sourcing`, `admin`):
+the gateway policy decides which `ref_*` tools a role may call; Postgres row-level security decides which
+datasets the caller can read, using the caller's own token (never a service key). No anonymous access, no
+client writes, published data immutable, role changes audited. Design and setup: [`docs/REFDATA.md`](https://github.com/milangeorge2000/opengxp/blob/main/docs/REFDATA.md).
+
 ## GxP Agent Gateway (`opengxp-gateway`)
 
 A control layer that sits in front of **any** MCP server (OpenGxP's own, or e.g. a LIMS/QMS server) so agent tool calls meet Part 11 / Annex 11 expectations. Design: [`docs/GATEWAY.md`](https://github.com/milangeorge2000/opengxp/blob/main/docs/GATEWAY.md).
@@ -94,6 +112,7 @@ Tests are built from the guidelines' own worked examples and tables:
 - Q3D(R2) Tables A.2.1, A.2.2, A.5.1 and the Appendix 4 Options 1 / 2a / 2b example
 - CORE adapter: unit-tested against a stand-in CLI writing CORE v1.0.0's JSON format, and integration-tested with the real CORE 1.0.0 release on the public CDISC pilot study SDTM data (509 rules, 9 domains, ~12 s): `OPENGXP_CORE=... OPENGXP_PILOT_SDTM=... uv run pytest tests/integration`
 - IND: every ICH M12 cutoff at and around its boundary, M12 Table 3 equations and Table 6 kdeg values; FDA 2005 Table 1 and the Appendix C rabbit example; ICH S9 Note 2; every row of ICH M3(R2) Tables 1–2; M3(R2) Q&A metabolite thresholds
+- Ref: IID parsing and every verdict branch on real rows of the FDA October 2026 release; on Postgres (CI): anonymous and role-less users see nothing, roles see only their datasets, no client can write or escalate, published rows are immutable, staged versions are invisible, revocation is immediate and audited, and the MCP tools end to end
 - Q1E: ANCOVA p-values, slopes, residual SD and confidence bounds match statsmodels to 1e-9; analytic crossing times; every branch of the extrapolation rules
 
 ```bash
